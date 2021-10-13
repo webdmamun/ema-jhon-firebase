@@ -1,8 +1,26 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import "./Login.css";
+import useAuth from "./../../hooks/useAuth";
 
 const Login = () => {
+  const { sgininUsingGoogle } = useAuth();
+  const location = useLocation();
+  const histroy = useHistory();
+  const redirect_uri = location.state?.form || "/";
+
+  const handleGoogleLogin = () => {
+    sgininUsingGoogle()
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        histroy.push(redirect_uri);
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        console.log(errorMessage);
+      });
+  };
   return (
     <div className="login-form">
       <div>
@@ -23,7 +41,9 @@ const Login = () => {
           New to Ema Jhon <Link to="/register">Create Account</Link>{" "}
         </p>
         <div>-------------or---------------</div>
-        <button className="btn-regular">Google Sgin In</button>
+        <button className="btn-regular" onClick={handleGoogleLogin}>
+          Google Sgin In
+        </button>
       </div>
     </div>
   );
